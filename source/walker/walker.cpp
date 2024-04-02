@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gdevice.h" // the library
+//#include "gdevice.h" // the library
 
 #define DEBUG_SHOW_GLSL_SOURCE	
 

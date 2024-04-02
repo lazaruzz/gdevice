@@ -196,7 +196,7 @@ Substance sMix(Substance s1, Substance s2, float a) {
     return substance;
 }
 
-vec4 fbm(vec2 p, float scale = 1.0/256.0)
+vec4 fbm(vec2 p, float scale)
 {
     const mat2 M2 = mat2(0.8,-0.6,0.6,0.8);
 
@@ -225,7 +225,7 @@ Substance getSubstance(vec4 t, vec3 scale)
 
     // FIX Elevated's snow: https://www.shadertoy.com/view/MdX3Rr
     float SC = 1.0;
-	float h = smoothstep(0.0, 80.0, t.z/SC + 25.0*fbm(10.01*t.xy/SC).z);
+	float h = smoothstep(0.0, 80.0, t.z/SC + 25.0*fbm(10.01*t.xy/SC, 1.0/256.0).z);
     float e = smoothstep(1.0 - 0.5*h, 1.0 - 0.1*h, N.z);
     float o = 0.3 + 0.7*smoothstep(0.0, 0.1, N.x + h*h);
     float s = //some*(1.0-flow); //

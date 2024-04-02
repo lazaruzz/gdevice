@@ -45,7 +45,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\dependencies\include;&quot;$(ProjectDir)&quot;"
+				AdditionalIncludeDirectories="..\..\dependencies\include;&quot;$(ProjectDir)&quot;;..\gdevice"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;"
 				MinimalRebuild="false"
 				ExceptionHandling="0"

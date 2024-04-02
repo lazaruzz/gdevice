@@ -1286,7 +1286,7 @@ namespace GL
 								p0 = strchr(message, ':');
 								if( p0>0 ) p1 = strchr(p0+1, ':');
 								if( p1>0 ) p2 = strchr(p1+1, ':');
-								if(p0>0 && p1>0 && p2>0) line = strtol(p1+1, &p2, 10);
+								if(p0>0 && p1>0 && p2>0) line = strtol(p1+1, &p2, 10) + 1;
 							}
 							ASSERT(line > 0);
 

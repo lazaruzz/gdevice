@@ -23,7 +23,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="..\..\..\binaries\debug"
 			IntermediateDirectory="..\..\..\binaries\debug\temp"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -300,11 +300,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\os\keyboard.h"
+				RelativePath=".\os\win32\keyboard.h"
 				>
 			</File>
 			<File
-				RelativePath=".\os\win32\keyboard.h"
+				RelativePath=".\os\keyboard.h"
 				>
 			</File>
 			<File
@@ -316,11 +316,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\os\mutex.h"
+				RelativePath=".\os\win32\mutex.h"
 				>
 			</File>
 			<File
-				RelativePath=".\os\win32\mutex.h"
+				RelativePath=".\os\mutex.h"
 				>
 			</File>
 			<File
@@ -344,11 +344,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\gpu\renderer.h"
+				RelativePath=".\gpu\opengl\renderer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\gpu\opengl\renderer.h"
+				RelativePath=".\gpu\renderer.h"
 				>
 			</File>
 			<File
@@ -360,11 +360,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\os\thread.h"
+				RelativePath=".\os\win32\thread.h"
 				>
 			</File>
 			<File
-				RelativePath=".\os\win32\thread.h"
+				RelativePath=".\os\thread.h"
 				>
 			</File>
 			<File
@@ -384,11 +384,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\os\window.h"
+				RelativePath=".\os\win32\window.h"
 				>
 			</File>
 			<File
-				RelativePath=".\os\win32\window.h"
+				RelativePath=".\os\window.h"
 				>
 			</File>
 		</Filter>
@@ -411,24 +411,10 @@
 		<File
 			RelativePath=".\application\assets\generate_gradientmap.glsl"
 			>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="BIN2C"
-				/>
-			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\application\assets\worlds\planet1\generate_terrain.glsl"
 			>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="BIN2C"
-				/>
-			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\type\gpu_tests.h"
@@ -437,24 +423,10 @@
 		<File
 			RelativePath=".\application\assets\worlds\planet1\render_sky.glsl"
 			>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="BIN2C"
-				/>
-			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\application\assets\worlds\planet1\render_terrain.glsl"
 			>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="BIN2C"
-				/>
-			</FileConfiguration>
 		</File>
 	</Files>
 	<Globals>
