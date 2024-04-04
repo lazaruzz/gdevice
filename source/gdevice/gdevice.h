@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 #ifdef EXPORTING_GDEVICE_DLL
 #define GDEVICE_API __declspec(dllexport)
@@ -18,3 +18,4 @@ GDEVICE_API int summit(int, int);
 #ifdef __cpluscplus
 }
 #endif
+*/
