@@ -139,7 +139,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="D:\repositories\gdevice\source\gdevice;..\..\dependencies\include"
+				AdditionalIncludeDirectories="D:\repositories\gdevice\source\gdevice;..\..\dependencies\include;..\gdevice"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
