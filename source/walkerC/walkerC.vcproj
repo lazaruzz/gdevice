@@ -73,9 +73,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib"
+				AdditionalDependencies="opengl32.lib gdevice.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="..\..\..\binaries\debug"
 				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="true"
 				GenerateMapFile="false"

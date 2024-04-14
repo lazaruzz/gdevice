@@ -4,19 +4,18 @@ using System.Linq;
 using System.Text;
 
 using System.Runtime.InteropServices;
+using GDevice;
 
 
 namespace walkerCS
 {
     class Walker
     {
-        [DllImport("gdevice.dll")]
-        public static extern int gdCreateWindow();
-
         static void Main(string[] args)
         {
-            int x = gdCreateWindow(); 
+            int x = GDevice.Window.Create();
             Console.WriteLine("HEllo: " + x.ToString());
         }
+
     }
 }

@@ -159,7 +159,7 @@ public:
 	    window.setTitle("FPS=%i%s Debug=[%s] Speed=%.2fkmh (x%i) Time=%02i.%02i Location=(%s) Direction=(%s)", 
 		    fps, fps<100 ? "  " : "",
             controls_string, 
-		    distance(camera.position, previous_pos) * METERS_PER_TILE/interval * 3600/1000,
+		    distance(camera.position, previous_pos) * METERS_PER_TILE*100/interval * 3600/1000,
 		    int(speedFactor),
 		    int(time), int(fract(time)*60),
 		    camera_position,

@@ -19,3 +19,23 @@ GDEVICE_API int summit(int, int);
 }
 #endif
 */
+
+
+
+#if defined(_MSC_VER)
+	#pragma comment( lib, "gdevice.lib" )
+#elif
+	#error unhandled compiler!
+#endif
+
+
+
+#ifdef __cpluscplus
+extern "C" {
+#endif
+
+__declspec(dllimport) int gdCreateWindow();
+
+#ifdef __cpluscplus
+}
+#endif

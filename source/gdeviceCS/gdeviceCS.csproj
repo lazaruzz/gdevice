@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{35E0A2DE-DEF5-4B87-B8D0-C42263365CC7}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{3B3EEA77-2E8C-4B74-ACDD-28468B712CF4}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>walkerCS</RootNamespace>
-    <AssemblyName>walkerCS</AssemblyName>
+    <RootNamespace>gdeviceCS</RootNamespace>
+    <AssemblyName>gdeviceCS</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -47,14 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Walker.cs" />
+    <Compile Include="GDevice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\gdeviceCS\gdeviceCS.csproj">
-      <Project>{3B3EEA77-2E8C-4B74-ACDD-28468B712CF4}</Project>
-      <Name>gdeviceCS</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
