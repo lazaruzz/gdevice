@@ -3,10 +3,9 @@
 
 int main()
 {
-    // HANDLE window = gdOpen();
-    int window = gdCreateWindow();
+    GD gdevice = gd_Create();
 /*
-    while(gdIsOpen(window)) 
+    while(gd_IsOpen(gdevice)) 
     {
         // TODO gameloop
     }

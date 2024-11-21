@@ -5,8 +5,12 @@
 #include "listener.h"
 
 
+namespace gd {
+    template<class ConcreteApplication> class Application;
+}
+
 template<class ConcreteApplication>
-class Application : public Listener<ConcreteApplication>
+class gd::Application : public Listener<ConcreteApplication>
 {
  public:   
 	Window<ConcreteApplication> window;

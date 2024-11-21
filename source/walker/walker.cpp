@@ -14,17 +14,20 @@
 
 #include "application/assets/worlds/planet1/parameters.h"
 
-class Walker : Application<Walker>
+class Walker : gd::Application<Walker>
 {
+    double wheelSpeed; // TODO: Get rid.
+
+    // TODO State
 	dmat3 camera;           
 	Node scene;
 	Heightmap heightmap; //gd::Asset<Heightmap>
     // TODO Set update function
 
     float time; 
-	Light sun;  // vec3 sun;
+	Light sun;  // TODO vec3 sun; // and should derive from time.
 
-	double wheelSpeed; // TODO: Get rid.
+	
 	
 public:
 

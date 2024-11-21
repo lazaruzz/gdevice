@@ -11,7 +11,7 @@
 
 
 template<class Application>
-class Window //: public Window
+class Window
 {
 public:
 	Listener<Application>* listener;

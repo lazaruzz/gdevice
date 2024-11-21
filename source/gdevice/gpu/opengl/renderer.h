@@ -17,6 +17,7 @@
 #include "application/assets/worlds/planet1/generate_terrain.glsl.h"
 #include "application/assets/worlds/planet1/render_terrain.glsl.h"
 #include "application/assets/worlds/planet1/render_sky.glsl.h"
+//#include <stdio.h>
 
 
 #define MAX_LIGHTS 4 // 32

@@ -14,7 +14,8 @@ struct Array
         allocated(allocated), 
         granularity(granularity) 
 	{
-        if(allocated) {
+        if( allocated ) 
+        {
             allocate(allocated);
         }
 	}

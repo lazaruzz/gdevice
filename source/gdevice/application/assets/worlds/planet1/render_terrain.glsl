@@ -581,9 +581,44 @@ vec3 getTriplanarWeightVector(vec3 N)
     return w / dot(w, vec3(1.0));
 }
 
+// TEMP
+// https://www.shadertoy.com/view/ws3Bzf
+vec4 biplanar( sampler2D sam, in vec3 p, in vec3 n, float lodBias)
+{
+    float k = 8.0;
+
+    vec3 dpdx = dFdx(p);
+    vec3 dpdy = dFdy(p);
+    n = abs(n);
+
+    ivec3 ma = (n.x>n.y && n.x>n.z) ? ivec3(0,1,2) :
+               (n.y>n.z)            ? ivec3(1,2,0) :
+                                      ivec3(2,0,1) ;
+    ivec3 mi = (n.x<n.y && n.x<n.z) ? ivec3(0,1,2) :
+               (n.y<n.z)            ? ivec3(1,2,0) :
+                                      ivec3(2,0,1) ;
+    ivec3 me = ivec3(3) - mi - ma;
+    
+    vec4 x = textureGrad( sam, vec2(   p[ma.y],   p[ma.z]), 
+                               vec2(dpdx[ma.y],dpdx[ma.z]), 
+                               vec2(dpdy[ma.y],dpdy[ma.z]) );
+    vec4 y = textureGrad( sam, vec2(   p[me.y],   p[me.z]), 
+                               vec2(dpdx[me.y],dpdx[me.z]),
+                               vec2(dpdy[me.y],dpdy[me.z]) );
+    
+    vec2 m = vec2(n[ma.x],n[me.x]);
+    float KK = 0.4567;
+    m = clamp( (m-KK)/(1.0-KK), 0.0, 1.0 );
+    //m = pow( m, vec2(k/8.0) );
+        m = pow( m, vec2(16.0) );
+	return (x*m.x + y*m.y) / (m.x + m.y);
+}
+
 vec4 textureTriplanar(sampler2D detailsTU, vec3 position, vec3 weight, float lodBias)
 {
-#if 1
+#if 0
+    return biplanar(detailsTU, position, weight, lodBias);
+#elif 1
     return weight.x*texture(detailsTU, position.zy, lodBias) 
          + weight.y*texture(detailsTU, position.zx, lodBias) 
          + weight.z*texture(detailsTU, position.xy, lodBias);
@@ -906,12 +941,13 @@ void main()
 	vec3 specularColor	= sampleAmbient(reflect(L,N), L, sunColor, zenithColor, horizonColor, groundColor, lfShadow, sunHaloWidth);
 	vec3 fresnelColor	= sampleAmbient(reflect(E,N), L, sunColor, zenithColor, horizonColor, groundColor, lfShadow, sunHaloWidth);
 	
-	// Fresnel
-	float F0		= dot(mixmap, specmap);
-	float specPower	= dot(mixmap, specpow);
-	float specular  = F0 * pow(max(0.0, dot(E, reflect(L, N))), specPower);
-	float fresnel0   = pow(1.0 - abs(dot(E,N)), specPower);
-	float fresnel   = mix(F0*fresnel0, F0 + fresnel0, 0.1); // 1.0 => pure Schlick's approximation
+	// Direct light
+    float lambertian    = max(0.0, dot(N,L));
+	float F0		    = dot(mixmap, specmap);
+	float specPower	    = dot(mixmap, specpow);
+	float specular      = F0 * pow(max(0.0, dot(E, reflect(L, N))), specPower);
+	float fresnel0      = pow(1.0 - abs(dot(E,N)), specPower);
+	float fresnel       = mix(F0*fresnel0, F0 + fresnel0, 0.1); // 1.0 => pure Schlick's approximation
 	
 	vec3 light = vec3(0.0);
 	
@@ -940,16 +976,20 @@ else
 	// TODO: make input for the pixel: relief, AO, etc.. (TBD)
 
 	// TODO ambient = 0.04 * (1.0-occlusion) * sunColor; ?
-	light += 0.40 * Diffuse  * occlusion * daylight * lfShadow * sunColor * max(0.0, dot(N,L)) ;//* (1.0 - specular);
+    float EdotL = max(0.0, dot(E,L));
+    float EdotLcontrast = 1.0 - 0.5*EdotL * smoothstep(+0.05, 0.5, L.z);
+
+
+	light += 0.40 * Diffuse  * occlusion * daylight * lfShadow * sunColor * pow(lambertian, 0.8) ;//* (1.0 - specular);
 	light += 0.06 * Specular * relief	 * daylight * mix(0.2, 1.0, lfShadow) * specularColor * specular;//* max(0.0, dot(N,L));
-	light += 0.01 * Indirect * occlusion * daylight * sunColor * max(0.0, dot(N,I)); 
+	light += 0.01 * Indirect * occlusion * daylight * sunColor * max(0.0, dot(N,I));
 	light += 0.02 * Sky      * occlusion *			  zenithColor * N.z;
 	light += 0.02 * Fresnel  * relief	 * (fresnelColor - light) * fresnel;
 }
 
     if(Heatmap > 0)
     {
-        float diffuse  = Diffuse  * occlusion * daylight * lfShadow                * max(0.0, dot(N,L));
+        float diffuse  = Diffuse  * occlusion * daylight * lfShadow                * lambertian;
         float specular = Specular * relief	  * daylight * mix(0.2, 1.0, lfShadow) * specular;
         float matLuma  = dot(matColor.rgb, vec3(0.299, 0.587, 0.114));
         matColor.rgb = mix(matColor.rgb, vec3(matLuma), 1.0*occlusion*pow(mix(diffuse, specular, 0.1),        occlusion*2.00));
@@ -971,9 +1011,12 @@ else
 	if( Scattering > 0 ) {
 		//dist = length(EE); //?
 	    float EdotL = max(0.0, dot(E,L));
+        float EdotLcontrast = 1.0 - 0.99*EdotL * smoothstep(+0.05, 0.5, L.z);
 	    float scattering = smoothstep(+0.05, 0.5, L.z) * (1.0 - exp(-0.02*dist)) * pow(EdotL, 8.0);
 	    scattering = min(4.0*scattering, 0.1); // lens effect
 		color += mix(lfShadow, 1.0, 0.7) * scattering * sunColor; // extra volume in shadowed areas 
+
+        //color *= vec3(1.0 - EdotLcontrast * max(0.0, dot(N,I)));
 
         float fogAmount = smoothstep(0.0, visibileDistance, dist /*+ 0.0*volumetric*/);
 		color = mix(color, groundColor, fogAmount);

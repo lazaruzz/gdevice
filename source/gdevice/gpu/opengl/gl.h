@@ -1278,7 +1278,7 @@ namespace GL
 								char *p1 = 0, *p2 = 0;
 								p1 = strchr(message, '(');
 								if( p1>0 ) p2 = strchr(p1+1, ')');
-								if( p1>0 && p2>0 ) line = strtol(p1+1, &p2, 10);
+								if( p1>0 && p2>0 ) line = strtol(p1+1, &p2, 10) + 1; // it was +0 
 							}
 							if(line <= 0) {
 								// ATI/Intel error message
