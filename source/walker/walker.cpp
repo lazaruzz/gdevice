@@ -16,18 +16,20 @@
 
 class Walker : gd::Application<Walker>
 {
-    double wheelSpeed; // TODO: Get rid.
+    // TODO ECS based entity creation, with components and systems
 
-    // TODO State
-	dmat3 camera;           
-	Node scene;
-	Heightmap heightmap; //gd::Asset<Heightmap>
+    dmat3 camera; // This is used to move and rotate the world (there is no camera). The POV is always the origin and pointing north.
+    double speedFactor;
+
+    Node scene;
+    Heightmap heightmap; //gd::Asset<Heightmap>
     // TODO Set update function
 
     float time; 
-	Light sun;  // TODO vec3 sun; // and should derive from time.
+    Light sun;  // TODO vec3 sun; // and should derive from time.
 
-	
+    
+
 	
 public:
 
@@ -40,7 +42,7 @@ public:
         scene.transform.rotation = vec3(-90, 0, 0);
 	    scene.children.push(&heightmap);
 
-        wheelSpeed = 40;
+        speedFactor = 40;
 	    camera.position = dvec3(0,0,10.0);
 	    camera.rotation = dvec3(0,0,0);
     	
@@ -57,47 +59,45 @@ public:
 	    window.renderer->setProjection(FOV, NEAR_CLIP_PLANE, heightmap.visibility());
     }
 
-    // TODO onInput(Input& input)
-    // {
-    //   gd::update(camera, cameraControls = StandardCameraControls)
-    // }
-
-    // TODO onUpdate(Window<Walker>& window, double elapsed)
-    // {
-    // scene.update(camera)
-    // }
-
 	void onDraw(Window<Walker>& window, double elapsed)
     {
         Renderer& renderer = *window.renderer;
 	    
-        //////////////////////////
-        // Update by user input.
+        ///////////////////////////////
+        // Update scene by user input.
         //
-	    // Camera rotation
-	    dvec3 mouse_rotation     = dvec3(window.mouseDeltaY(), 0, window.mouseDeltaX());
-        dvec3 cursors_rotation   = dvec3(Key::cursorDeltaY(), 0, Key::cursorDeltaX());
-	    dvec3 input_rotation     = double(!window.isPointerVisible) * mouse_rotation + 0.01 * cursors_rotation;
-	    camera.rotation   -= ROTATION_SPEED * input_rotation;		// counter-clockwise
-	    camera.rotation.z  = mod(camera.rotation.z, 360.0);			// positive horizontal axis
-	    camera.rotation.x  = clamp(camera.rotation.x, -90.0, +90.0);// clamped to [-90,+90] in order to avoid gimbal lock
 
-        // Camera position
-	    dmat3 T = transpose(rotate(camera.rotation));
-	    dvec3 forward =  T.yAxis;
-	    dvec3 strafe  = -T.xAxis;
-	    double speedFactor = (Key(LSHIFT).isPressed() ? BOOST_FACTOR : 1) * (Key(LCONTROL).isPressed() ? WARP_FACTOR : 1) * (wheelSpeed*wheelSpeed);
-	    double ts = TRANSLATION_SPEED * speedFactor;
-	    camera.position += forward*(Key('W').isPressed()? +ts : Key('S').isPressed()? -ts : 0) + strafe*(Key('A').isPressed()? +ts : Key('D').isPressed()? -ts : 0);
-	    camera.position.z += (Key(' ').isPressed()? +ts : Key('Z').isPressed()? -ts : 0); // TODO could be included into strafe
+        // TODO
+        // camera = transform(camera, window, ROTATION_SPEED);
+
+	        // Camera rotation
+	        dvec3 mouse_rotation     = dvec3(window.mouseDeltaY(), 0, window.mouseDeltaX());
+            dvec3 cursors_rotation   = dvec3(Key::cursorDeltaY(), 0, Key::cursorDeltaX()); // TODO window.HasFocus()
+	        dvec3 input_rotation     = double(!window.isPointerVisible) * mouse_rotation + 0.01 * cursors_rotation;
+	        camera.rotation   -= ROTATION_SPEED * input_rotation;		// counter-clockwise
+	        camera.rotation.z  = mod(camera.rotation.z, 360.0);			// positive horizontal axis
+	        camera.rotation.x  = clamp(camera.rotation.x, -90.0, +90.0);// clamped to [-90,+90] in order to avoid gimbal lock
+
+            // Camera position
+	        dmat3 T = transpose(rotate(camera.rotation));
+	        dvec3 forward =  T.yAxis;
+	        dvec3 strafe  = -T.xAxis;
+	        double factor = (Key(LSHIFT).isPressed() ? BOOST_FACTOR : 1) * (Key(LCONTROL).isPressed() ? WARP_FACTOR : 1) * pow(speedFactor, 2.0);
+	        double speed = factor * TRANSLATION_SPEED;
+	        camera.position += forward*(Key('W').isPressed()? +speed : Key('S').isPressed()? -speed : 0) + strafe*(Key('A').isPressed()? +speed : Key('D').isPressed()? -speed : 0);
+	        camera.position.z += (Key(' ').isPressed()? +speed : Key('Z').isPressed()? -speed : 0); // TODO could be included into strafe
+
+        // TODO
+        // time = 
 
 	    // Time
-	    float speed = (Key('E').isPressed() ? +1 : Key('R').isPressed() ? -1 : 0) * float(TIME_SPEED) * (wheelSpeed);
-	    time = fmod( time + speed*float(elapsed), 24.0f );
+	    float timeSpeed = (Key('E').isPressed() ? +1 : Key('R').isPressed() ? -1 : 0) * float(TIME_SPEED) * (speedFactor);
+	    time = fmod( time + timeSpeed*float(elapsed), 24.0f );
 	    sun.spot_direction = rotate((time-7)*360.0f/24.0f, 40.0f, 0.0f) * vec3(0.2, -0.8, 0.1);
 
 	    // TODO: Resolve this dependency.
-	    for(int i=0; i<Controls::CONTROLCOUNT; i++) {
+	    for(int i=0; i<Controls::CONTROLCOUNT; i++)
+        {
 		    Key(Controls::Bindings[i]).isPressed();
 	    }
 
@@ -106,7 +106,7 @@ public:
         ////////////////////////////
         // Update scene
         //
-        double level = heightmap.moveAt(camera);
+        double level = heightmap.moveAt(camera); // moves and rotates the world (not the camera)
         heightmap.generateInvalidatedTiles(renderer);
 
         // TODO: Sleep while compute shader is working.
@@ -133,7 +133,7 @@ public:
 	    // 
 	    // Misc controls
 	    //
-	    wheelSpeed = clamp(wheelSpeed + window.mouseDeltaWheel()/200.0, 0.05, 31.6228);
+	    speedFactor = clamp(speedFactor + window.mouseDeltaWheel()/200.0, 0.05, 31.6228);
 	    if(Key(ESCAPE).isJustPressed()) window.togglePointer();
         if(Key('L').isJustPressed()) window.toogleFullscreen();
 	    if(Key('X').isPressed()) window.close();
@@ -176,6 +176,15 @@ public:
     int run() {
         return window.runPlainMessageLoop();
     }
+
+private:
+// TODO make private static functions for
+// - Updating the scene by using the user input
+// - Rendering the scene
+// - Display debug stuff
+// TODO make these functions tasks that can run in CPU or GPU as system functions over components.
+
+
 };
 
 
