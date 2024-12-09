@@ -18,15 +18,23 @@ class Walker : gd::Application<Walker>
 {
     // TODO ECS based entity creation, with components and systems
 
-    dmat3 camera; // This is used to move and rotate the world (there is no camera). The POV is always the origin and pointing north.
+    // POV
+    // NOTE This is indeed used to move and rotate the scene.
+    // As a matter of fact, there is no camera here and the real POV 
+    // is always the origin and pointing north.
+    dmat3 camera; 
     double speedFactor;
 
+    // Scene
     Node scene;
     Heightmap heightmap; //gd::Asset<Heightmap>
+    // NOTE any GPU asset should have a memory handler, 
+    // possibly nested into a ECS design pattern.
     // TODO Set update function
 
+    // Time and Diffuse light direction
     float time; 
-    Light sun;  // TODO vec3 sun; // and should derive from time.
+    Light sun;  // TODO vec3 sun; 
 
     
 
@@ -86,6 +94,11 @@ public:
 	        double speed = factor * TRANSLATION_SPEED;
 	        camera.position += forward*(Key('W').isPressed()? +speed : Key('S').isPressed()? -speed : 0) + strafe*(Key('A').isPressed()? +speed : Key('D').isPressed()? -speed : 0);
 	        camera.position.z += (Key(' ').isPressed()? +speed : Key('Z').isPressed()? -speed : 0); // TODO could be included into strafe
+
+
+
+        /////////////////////////////
+        // Update time by user input
 
         // TODO
         // time = 
