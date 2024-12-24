@@ -19,3 +19,5 @@ source/*/bin
 source/*/obj
 source/*/Debug
 source/Debug
+source/ECS/Release
+source/Release

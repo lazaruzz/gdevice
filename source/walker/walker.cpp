@@ -27,6 +27,7 @@ class Walker : gd::Application<Walker>
 
     // Scene
     Node scene;
+	// TODO auto heightmap = scene.add<Heightmap>();
     Heightmap heightmap; //gd::Asset<Heightmap>
     // NOTE any GPU asset should have a memory handler, 
     // possibly nested into a ECS design pattern.
