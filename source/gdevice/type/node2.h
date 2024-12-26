@@ -4,7 +4,8 @@
 #include <vector>
 #include <assert.h>
 
-// TODO make gd::type::node and gd::type::scene ?
+// TODO gd::Entity and gd::Node (which is ECS Entity with Inheritance).
+// TODO rename Component as DataPart, Attribute, Property ?
 // TODO Apply logic to components of a node (update function).
 namespace gd
 {
@@ -45,7 +46,7 @@ namespace gd
 		gd::Node2 parent;
 		std::vector<gd::Node2> children;
 	};
-
+/*
     Node2 AddChild(Node2 node)
     {
     std::vector<gd::Hierarchy>& components = GetComponents<gd::Hierarchy>(node);
@@ -59,12 +60,12 @@ namespace gd
 
         return child;
     }
-    
-}
+    */
+};
 
 
 
-
+/*
 typedef float vec3[3];
 
 struct Transform
@@ -76,6 +77,9 @@ struct Transform
 
 void main_ECS()
 {
+
+
+
     gd::Node2 node = gd::CreateNode();
 
     //
@@ -122,10 +126,4 @@ void main_ECS()
 
     
 }
-
-
-
-void main()
-{
-    main_ECS();
-}
+*/

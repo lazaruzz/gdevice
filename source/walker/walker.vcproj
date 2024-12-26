@@ -142,7 +142,7 @@
 				AdditionalIncludeDirectories="D:\repositories\gdevice\source\gdevice;..\..\dependencies\include;..\gdevice"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;"
 				MinimalRebuild="false"
-				ExceptionHandling="0"
+				ExceptionHandling="1"
 				RuntimeLibrary="0"
 				StructMemberAlignment="1"
 				BufferSecurityCheck="false"

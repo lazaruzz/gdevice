@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "gdevice.h" // the library
+//#include "gdevice.h" // the library ?
 
 #define DEBUG_SHOW_GLSL_SOURCE	
 
@@ -10,6 +10,7 @@
 
 #include "type/gpu.h"
 #include "type/node.h"
+#include "type/node2.h"
 #include "type/terrain/heightmap.h"
 
 #include "application/assets/worlds/planet1/parameters.h"

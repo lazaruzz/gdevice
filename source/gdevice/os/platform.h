@@ -122,13 +122,13 @@ inline void printf(void* x)			{ printf("%08X", x); };
 /////////////////////////////////////////
 // Debug macros
 /////////////////////////////////////////
-    #define ASSERT(statement)     (void)((statement) || (_ASSERT(#statement, __FUNCTION__, __FILE__, __LINE__),0))
+    #define ASSERT(statement)     (void)((statement) || (__ASSERT(#statement, __FUNCTION__, __FILE__, __LINE__),0))
     #define CRITICAL(message)     _CRITICAL((message), __FUNCTION__, __FILE__, __LINE__)
 
 // NOTE: Enabling DEBUG macros for RELEASE too, makes it not crash. TODO: Fix bug.
 #if defined(_DEBUG)
     #define DEBUG_PRINT                 printf
-    #define DEBUG_ASSERT(statement)     (void)((statement) || (_ASSERT(#statement, __FUNCTION__, __FILE__, __LINE__),0))
+    #define DEBUG_ASSERT(statement)     (void)((statement) || (__ASSERT(#statement, __FUNCTION__, __FILE__, __LINE__),0))
     #define DEBUG_CHECKPOINT_AUTO       _PRINT_PATH(__FUNCTION__, __FILE__, __LINE__); color(CMD_WHITE,CMD_CYAN); printf(__COUNTER__); color(15,0);
     #define DEBUG_CHECKPOINT(tag)       _PRINT_PATH(__FUNCTION__, __FILE__, __LINE__); color(CMD_WHITE,CMD_CYAN); printf("%s\n", #tag); color(15,0);
     #define DEBUG_PATH                  _PRINT_PATH(__FUNCTION__, __FILE__, __LINE__);
@@ -160,7 +160,7 @@ inline void printf(void* x)			{ printf("%08X", x); };
     #define DEBUG_RUN_ONCE(code)          {static bool t = false; if(!t) { code; t = true;}}
 #endif
 
-inline void _ASSERT(char* statement, char* function, char* filename, int line)
+inline void __ASSERT(char* statement, char* function, char* filename, int line)
 {
     _PRINT_PATH(function, filename, line);
     color(12,0); printf("ASSERTION FAILED: %s\n", statement );
