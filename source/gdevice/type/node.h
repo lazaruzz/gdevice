@@ -59,12 +59,11 @@ struct Node : Cacheable // VAO's id
 	VertexBuffer*	vbo;
 	IndexBuffer*	ibo;				// pointer, because 1 vertex buffer can have more ways to be connected
 	int				lod_index;			// -1 => compute by distance
-
-	Node* parent;
     // TODO: Node* coarser;
     // TODO: vec2 coarserQuadrant;
-	Array<Node*> children;
 
+    Node* parent;
+	Array<Node*> children;
 
 	Node()
 	{
