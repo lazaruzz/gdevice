@@ -160,6 +160,7 @@ inline void printf(void* x)			{ printf("%08X", x); };
     #define DEBUG_RUN_ONCE(code)          {static bool t = false; if(!t) { code; t = true;}}
 #endif
 
+// std library defines _ASSERT so it was necessary to rename this. 
 inline void __ASSERT(char* statement, char* function, char* filename, int line)
 {
     _PRINT_PATH(function, filename, line);

@@ -37,8 +37,8 @@ struct Node : Cacheable // VAO's id
 {
 	//enum Type { HeightmapType, ClipmapType, TileType, LightType, FoliageType } type;
 	//void* data;
-	dvec2 location;					// NOTE Heightmap only
-	float tileSize;					// NOTE Clipmap only
+	//dvec2 location;					// NOTE Heightmap only
+	//float tileSize;					// NOTE Clipmap only
 	vec4			object_id;		// NOTE Tile only // (x,y,size, reserved) // size>0 means it's a terrain tile
 	///////////////////////////////////////////////
 

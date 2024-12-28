@@ -7,8 +7,10 @@
 // TODO gd::Entity and gd::Node (which is ECS Entity with Inheritance).
 // TODO rename Component as DataPart, Attribute, Property ?
 // TODO Apply logic to components of a node (update function).
-namespace gd
-{
+
+
+//namespace gd
+//{
     typedef unsigned long Node2;
 
     template <typename T>
@@ -26,7 +28,7 @@ namespace gd
         return components;
     }
 
-    Node2 CreateNode()
+    Node2 AddNode()
     {
         static Node2 nextID = 0;
         return ++nextID;
@@ -41,27 +43,29 @@ namespace gd
         return components.back();
     }
 
-	struct Hierarchy
-	{
-		gd::Node2 parent;
-		std::vector<gd::Node2> children;
-	};
+    struct Hierarchy
+    {
+	    Node2 parent;
+	    std::vector<Node2> children;
+    };
 /*
     Node2 AddChild(Node2 node)
     {
-    std::vector<gd::Hierarchy>& components = GetComponents<gd::Hierarchy>(node);
-        gd::Hierarchy& nodeHierarchy = (components.size() == 0) ? AddComponent<gd::Hierarchy>(node) : components[0];
+        std::vector<Hierarchy>& components = GetComponents<Hierarchy>(node);
+        Hierarchy& nodeHierarchy = (components.size() == 0) ? AddComponent<Hierarchy>(node) : components[0];
 
-        Node2 child = gd::CreateNode();
-        gd::Hierarchy& childHierarchy = AddComponent<gd::Hierarchy>(child);
+        Node2 child = AddNode();
+        Hierarchy& childHierarchy = AddComponent<Hierarchy>(child);
 
         nodeHierarchy.children.push_back(child);
         childHierarchy.parent = node;
 
         return child;
     }
-    */
-};
+
+    // TODO GetChildren();
+*/
+//};
 
 
 
@@ -80,7 +84,7 @@ void main_ECS()
 
 
 
-    gd::Node2 node = gd::CreateNode();
+    gd::Node2 node = gd::AddNode();
 
     //
     // Assert AddComponent creates a component for the node and can be later on retrieved.
@@ -107,7 +111,7 @@ void main_ECS()
     // Scene example with hierarchy
     //
 
-    gd::Node2 scene = gd::CreateNode();
+    gd::Node2 scene = gd::AddNode();
     Transform& camera = gd::AddComponent<Transform>(scene);
 
     assert(gd::GetComponents<Transform>(scene).size() == 1);

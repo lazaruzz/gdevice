@@ -10,19 +10,26 @@
 
 #include "type/gpu.h"
 #include "type/node.h"
-#include "type/node2.h"
 #include "type/terrain/heightmap.h"
 
 #include "application/assets/worlds/planet1/parameters.h"
 
+#include "type/node2.h"
+
+// TODO all include should be gd/ prefixed: gd/os/platform, gd/type/node
+// TODO maybe also incapsulated in gd namespace (?)
+
 class Walker : gd::Application<Walker>
 {
+/*
     // TODO ECS based entity creation, with components and systems
+    Node2 scene2 = AddNode();
+    typedef dmat3 Transform;
+    Transform camera2 = AddComponent<Transform>(scene); // TODO scene.AddComponent<Transform>();
+    Node2 heightmap = AddChild<Heightmap>(scene); // TODO scene.AddChild<Heightmap>();
+*/
 
-    // POV
-    // NOTE This is indeed used to move and rotate the scene.
-    // As a matter of fact, there is no camera here and the real POV 
-    // is always the origin and pointing north.
+
     dmat3 camera; 
     double speedFactor;
 

@@ -25,7 +25,7 @@ namespace gd
         return components;
     }
 
-    Node2 CreateNode()
+    Node2 AddNode()
     {
         static Node2 nextID = 0;
         return ++nextID;
@@ -51,7 +51,7 @@ namespace gd
     std::vector<gd::Hierarchy>& components = GetComponents<gd::Hierarchy>(node);
         gd::Hierarchy& nodeHierarchy = (components.size() == 0) ? AddComponent<gd::Hierarchy>(node) : components[0];
 
-        Node2 child = gd::CreateNode();
+        Node2 child = gd::AddNode();
         gd::Hierarchy& childHierarchy = AddComponent<gd::Hierarchy>(child);
 
         nodeHierarchy.children.push_back(child);
@@ -76,7 +76,7 @@ struct Transform
 
 void main_ECS()
 {
-    gd::Node2 node = gd::CreateNode();
+    gd::Node2 node = gd::AddNode();
 
     //
     // Assert AddComponent creates a component for the node and can be later on retrieved.
@@ -103,7 +103,7 @@ void main_ECS()
     // Scene example with hierarchy
     //
 
-    gd::Node2 scene = gd::CreateNode();
+    gd::Node2 scene = gd::AddNode();
     Transform& camera = gd::AddComponent<Transform>(scene);
 
     assert(gd::GetComponents<Transform>(scene).size() == 1);

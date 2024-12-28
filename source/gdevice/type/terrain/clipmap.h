@@ -10,6 +10,8 @@ struct Clipmap : public Node
 	int lod;
     ivec2 coarserTile;
     int quadrantInCoarserTile;
+
+    float tileSize;	
     
 
 	dvec2 previousLocation;

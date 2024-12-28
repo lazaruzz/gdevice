@@ -14,7 +14,9 @@ struct Heightmap : public Node
 {
 private:
 	int   tileRes;
-	IndexBuffer ibo;
+    dvec2 location;
+    
+    IndexBuffer ibo;
 
 public:
 	int getTileResolution()
