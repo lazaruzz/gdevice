@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="ECS"
-	ProjectGUID="{50F73614-E647-4B27-AC26-DBA4C7C7A07C}"
-	RootNamespace="ECS"
+	Name="ECS_test"
+	ProjectGUID="{77303610-D75F-4287-BFED-7DF155C389E0}"
+	RootNamespace="ECS_test"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>

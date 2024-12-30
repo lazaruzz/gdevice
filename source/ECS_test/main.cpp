@@ -1,13 +1,15 @@
-#pragma once
+#include <stdio.h>
 
+
+#if 1
 // #define _DEBUG
 
-#define TSL_NO_EXCEPTIONS
-#define _HAS_EXCEPTIONS 0
-#define _DEFINE_DEPRECATED_HASH_CLASSES 0
-#include <unordered_map>
+//#define TSL_NO_EXCEPTIONS
+//#define _HAS_EXCEPTIONS 0
+//#define _DEFINE_DEPRECATED_HASH_CLASSES 0
+//#include <tr1/unordered_map>
 //#include <hash_map>
-
+#include <map>
 #include <vector>
 #include <assert.h>
 
@@ -26,18 +28,17 @@
         return ++nextID;
     }
 
-/*
     template <typename T>
-    std::tr1::unordered_map<Node2, std::vector<T>>& GetComponentsMap()
+    std::map<Node2, std::vector<T>>& GetComponentsMap()
     {
-        static std::tr1::unordered_map<Node2, std::vector<T>> componentsMap;
+        static std::map<Node2, std::vector<T>> componentsMap;
         return componentsMap;
     }
 
     template <typename T>
     std::vector<T>& GetComponents(Node2 node)
     {
-        std::tr1::unordered_map<Node2, std::vector<T>>& componentsMap = GetComponentsMap<T>();
+        std::map<Node2, std::vector<T>>& componentsMap = GetComponentsMap<T>();
         std::vector<T>& components = componentsMap[node];
         return components;
     }
@@ -49,8 +50,9 @@
         T component;
         components.push_back(component);
         return components.back();
-    }*/
-/*
+    }
+
+
     struct Hierarchy
     {
 	    Node2 parent;
@@ -70,14 +72,14 @@
 
         return child;
     }
-*/
+
     // TODO GetChildren();
 
 //};
 
 
 
-/*
+
 typedef float _vec3[3];
 
 struct Transform
@@ -86,7 +88,7 @@ struct Transform
     _vec3 rotation;
     _vec3 scale;
 };
-*/
+
 
 struct SomeDataPart
 {
@@ -97,17 +99,12 @@ struct SomeDataPart
 
 void main_ECS()
 {
-
-std::tr1::unordered_map<int, int> testMap;
-
     Node2 node = AddNode();
-
-//    std::vector<int>& components0 = GetComponents<int>(node);
 
     //
     // Assert AddComponent creates a component for the node and can be later on retrieved.
     //
-/*
+
     std::vector<Transform>& components0 = GetComponents<Transform>(node);
     assert(components0.size() == 0);
 
@@ -124,11 +121,11 @@ std::tr1::unordered_map<int, int> testMap;
 
     assert(t1.position[0] = 123);
     assert(&t0 == &t1);
-*/
+
     //
     // Scene example with hierarchy
     //
-/*
+
     Node2 scene = AddNode();
     Transform& camera = AddComponent<Transform>(scene);
 
@@ -145,7 +142,12 @@ std::tr1::unordered_map<int, int> testMap;
     std::vector<Hierarchy>& heightmapHierarchyPool = GetComponents<Hierarchy>(heightmap);
     assert(heightmapHierarchyPool.size() == 1);
     assert(heightmapHierarchyPool[0].parent = scene);
-*/
-    
 }
 
+#endif
+
+void main()
+{
+    main_ECS();
+    printf("hello spank\n");
+}

@@ -14,7 +14,7 @@
 
 #include "application/assets/worlds/planet1/parameters.h"
 
-#include "type/node2.h"
+//#include "type/node2.h"
 
 // TODO all include should be gd/ prefixed: gd/os/platform, gd/type/node
 // TODO maybe also incapsulated in gd namespace (?)
@@ -43,7 +43,7 @@ class Walker : gd::Application<Walker>
 
     // Time and Diffuse light direction
     float time; 
-    Light sun;  // TODO vec3 sun; 
+    Light sun;  // TODO vec3 sun; B
 
     
 

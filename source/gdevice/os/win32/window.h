@@ -324,6 +324,7 @@ public:
 					clientCenter.x = clientRect.right / 2;
 					clientCenter.y = clientRect.bottom / 2;
 
+                    // TODO Found bugged delta when screen resolution is 4K.
 					int dx = LOWORD(lParam) - clientCenter.x;
 					int dy = HIWORD(lParam) - clientCenter.y;
 					
