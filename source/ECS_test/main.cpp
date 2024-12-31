@@ -5,7 +5,7 @@
 // #define _DEBUG
 
 //#define TSL_NO_EXCEPTIONS
-//#define _HAS_EXCEPTIONS 0
+#define _HAS_EXCEPTIONS 0
 //#define _DEFINE_DEPRECATED_HASH_CLASSES 0
 //#include <tr1/unordered_map>
 //#include <hash_map>
