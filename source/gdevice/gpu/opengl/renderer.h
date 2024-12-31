@@ -250,7 +250,10 @@ public:
 		ModelViewMatrix = mat4(1);
 	}
 
-
+    void setLight(Light& light)
+    {
+        lights[ light.id ] = &light;
+    }
 
 
 
@@ -287,10 +290,10 @@ public:
 
 
 		setTransform( ModelViewMatrix );
-
+/*
 		if( node.light ) {
 			lights[ node.light->id ] = node.light;
-		}
+		}*/
 /*
 		if( node.material ) {
 			material = node.material;
@@ -518,8 +521,8 @@ public:
 
         GL::GLSL::bind( programGenerateTerrain );
 
-        GL::GLSL::set( programGenerateTerrain, "offset",	tile->object_id.xy );
-		GL::GLSL::set( programGenerateTerrain, "size",		tile->object_id.z );
+        GL::GLSL::set( programGenerateTerrain, "offset",	tile->tileID.xy );
+		GL::GLSL::set( programGenerateTerrain, "size",		tile->tileID.z );
 
         // creation of texture, uploading and binding to texture unit
 		GL::Texturing::bind( 0, vbo.quartets );

@@ -29,41 +29,85 @@
 // - bind the attribute pointers
 // - bind the 'detail' attribute as an input texture
 
+struct Node;
+struct Child;
 
-
-
-
-struct Node : Cacheable // VAO's id
+struct Parent 
 {
-	//enum Type { HeightmapType, ClipmapType, TileType, LightType, FoliageType } type;
-	//void* data;
-	//dvec2 location;					// NOTE Heightmap only
-	//float tileSize;					// NOTE Clipmap only
-	vec4			object_id;		// NOTE Tile only // (x,y,size, reserved) // size>0 means it's a terrain tile
+	Array<Node*> children; // TODO use Child* instead of Node*
+};
+
+struct Child 
+{
+// TODO Parent* parent;
+    Node* parent; // TODO use Parent* instead of Node*
+};
+/*
+struct Hierarchy 
+{
+    Node* parent;
+	Array<Node*> children;
+};
+*/
+struct Transform 
+{
+    mat3 transform;
+};
+
+struct Culling
+{
+    vec4 AABB;
+};
+
+struct Geometry 
+{
+	//Material*		material; // TerrainMaterial by default
+	VertexBuffer*	vbo;
+	IndexBuffer*	ibo;
+};
+
+struct Impostor 
+{
+    vec2			impostorDirection;
+	float			impostorDistance;
+	Texture<rgba>	impostorTexture;	
+};
+
+struct TileData
+{
+    vec4 tileID;
+};
+
+
+
+
+struct Node : Cacheable, Parent, Child, Transform, TileData, Geometry, Culling, Impostor
+{
+	//vec4 tileID;		// NOTE Tile only // (x,y,size, reserved) // size>0 means it's a terrain tile
 	///////////////////////////////////////////////
 
-	mat3 transform;
-	vec4 bound;								// (center,radius) for sphere/frustum culling
+	//mat3 transform;
+	//vec4 bound;								// (center,radius) for sphere/frustum culling
 
 	// impostering
-	vec2			impostor_direction;		// vec3 impostor_id
-	float			impostor_distance;
-	Texture<rgba>	impostor;				//rgb+height
+	//vec2			impostor_direction;		// vec3 impostor_id
+	//float			impostor_distance;
+	//Texture<rgba>	impostor;				//rgb+height
 
 	// PROP no more light nodes in scene 
 	// TODO change to radiosity/AAOC info
-	Light*			light;	
+	//Light*			light;	
 
 	// normal rendering
 	//Material*		material;
-	VertexBuffer*	vbo;
-	IndexBuffer*	ibo;				// pointer, because 1 vertex buffer can have more ways to be connected
-	int				lod_index;			// -1 => compute by distance
+	//VertexBuffer*	vbo;
+	//IndexBuffer*	ibo;				// pointer, because 1 vertex buffer can have more ways to be connected
+
     // TODO: Node* coarser;
     // TODO: vec2 coarserQuadrant;
 
-    Node* parent;
-	Array<Node*> children;
+    //Node* parent;
+	//Array<Node*> children;
 
 	Node()
 	{
@@ -72,7 +116,7 @@ struct Node : Cacheable // VAO's id
 		transform.scale		= vec3(1);
 
 		//this->material	= NULL;
-		this->light		= NULL;	
+		//this->light		= NULL;	
 		this->vbo		= NULL;
 		this->ibo		= NULL;
 		this->parent	= NULL;

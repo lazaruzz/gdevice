@@ -49,7 +49,6 @@ struct Clipmap : public Node
 			vbo.mixmaps.scale.st = tileSize;
 
 			tile.ibo = ibo;
-			tile.lod_index = 0;
 
 			tile.parent = this;
 		}
@@ -134,7 +133,7 @@ struct Clipmap : public Node
 			vec2 point;
 			point.x = -(tileValue(location.x, 2*tileSize) + CLIPMAP_ODDITY/2.0f)* 2*tileSize + (i-CLIPMAP_SIZE/2)*tileSize;
 			point.y = -(tileValue(location.y, 2*tileSize) + CLIPMAP_ODDITY/2.0f)* 2*tileSize + (j-CLIPMAP_SIZE/2)*tileSize;
-			getTile(i,j).object_id = vec4( point, tileSize, 0.0 );
+			getTile(i,j).tileID = vec4( point, tileSize, 0.0 );
 		}
 	}
 

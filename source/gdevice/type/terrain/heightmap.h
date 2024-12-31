@@ -2,14 +2,10 @@
 
 #include "os/thread.h"
 #include "os/mutex.h"
-
 #include "type/terrain/clipmap.h"
-//#include "engines/graphic/skybox.h"
 #include "gpu/renderer.h"
 
 
-
-// TODO: Rename as Terrain (?)
 struct Heightmap : public Node
 {
 private:
@@ -19,18 +15,6 @@ private:
     IndexBuffer ibo;
 
 public:
-	int getTileResolution()
-	{
-		return tileRes;
-	}
-
-	void setTileResolution(int resolution)
-	{
-        float ex = log2(float(resolution-1));
-        DEBUG_ASSERT(ex - int(ex) < 1E-9); // Must be 2^N+1
-		this->tileRes = (1 << int(ex)) + 1;	
-		ibo.init(this->tileRes);
-	}
 
 	Heightmap()
 	{
@@ -44,6 +28,19 @@ public:
 	~Heightmap()
 	{
 		setLODs(0);		
+	}
+
+    int getTileResolution()
+	{
+		return tileRes;
+	}
+
+	void setTileResolution(int resolution)
+	{
+        float ex = log2(float(resolution-1));
+        DEBUG_ASSERT(ex - int(ex) < 1E-9); // Must be 2^N+1
+		this->tileRes = (1 << int(ex)) + 1;	
+		ibo.init(this->tileRes);
 	}
 
 	void setLODs( int lods )

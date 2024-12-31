@@ -14,38 +14,45 @@
 
 #include "application/assets/worlds/planet1/parameters.h"
 
-//#include "type/node2.h"
+#include "type/entity.h"
 
 // TODO all include should be gd/ prefixed: gd/os/platform, gd/type/node
 // TODO maybe also incapsulated in gd namespace (?)
 
-class Walker : gd::Application<Walker>
-{
-/*
+
     // TODO ECS based entity creation, with components and systems
-    Node2 scene2 = AddNode();
-    typedef dmat3 Transform;
+    
+/*    typedef dmat3 Transform;
     Transform camera2 = AddComponent<Transform>(scene); // TODO scene.AddComponent<Transform>();
     Node2 heightmap = AddChild<Heightmap>(scene); // TODO scene.AddChild<Heightmap>();
 */
 
+void CreateScene()
+{
+    // scene       : Hierarchy
+    // - Heightmap : Transform3D (camera), Hierarchy
+    //   - Clipmap : Transform2D, Hierarchy
+    //     - Tile  : Transform2D, VBO/IBO, Imposter
+    // - Gui imposter
+}
 
+
+class Walker : gd::Application<Walker>
+{
+// NEW
+    Entity scene2;
+    typedef dmat3 Transform;
+    //Transform& camera2;
+
+
+// OLD
     dmat3 camera; 
     double speedFactor;
 
-    // Scene
     Node scene;
-	// TODO auto heightmap = scene.add<Heightmap>();
-    Heightmap heightmap; //gd::Asset<Heightmap>
-    // NOTE any GPU asset should have a memory handler, 
-    // possibly nested into a ECS design pattern.
-    // TODO Set update function
-
-    // Time and Diffuse light direction
+    Heightmap heightmap;
     float time; 
-    Light sun;  // TODO vec3 sun; B
-
-    
+    Light sun;  // TODO vec3 sun;
 
 	
 public:
@@ -54,7 +61,7 @@ public:
     {
         heightmap.setTileResolution(TILE_RESOLUTION);
 	    heightmap.setLODs(CLIPMAPS_COUNT);	
-	    heightmap.light = &sun;
+	    //heightmap.light = &sun;
 
         scene.transform.rotation = vec3(-90, 0, 0);
 	    scene.children.push(&heightmap);
@@ -147,6 +154,7 @@ public:
 	    renderer.setFogDensity(FOG_DENSITY); // TODO: Move to world properties.
 	    renderer.clear();
 	    renderer.inverseRotationMatrix = transpose(RotationMatrix(scene.transform.rotation) * RotationMatrix(heightmap.transform.rotation));
+        renderer.setLight(sun);
         // TODO: renderer.setTarget<rgba>( NULL );
 	    renderer.draw( scene );
 	    renderer.drawSky();
