@@ -6,7 +6,7 @@
 #include "gpu/renderer.h"
 
 
-struct Heightmap : public Node
+struct Heightmap : public Node // TODO _NodeBase
 {
 private:
 	int   tileRes;

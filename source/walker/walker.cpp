@@ -151,7 +151,6 @@ public:
 	    // Rendering
 	    //
         // TODO: renderer.barrier 
-	    renderer.setFogDensity(FOG_DENSITY); // TODO: Move to world properties.
 	    renderer.clear();
 	    renderer.inverseRotationMatrix = transpose(RotationMatrix(scene.transform.rotation) * RotationMatrix(heightmap.transform.rotation));
         renderer.setLight(sun);

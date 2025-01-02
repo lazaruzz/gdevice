@@ -23,6 +23,9 @@
         return nextID++;
     }
 
+    // TODO DestroyEntity()
+    // ??
+
     template <typename T>
     std::map<Entity, std::vector<T>>& GetComponentsMap()
     {

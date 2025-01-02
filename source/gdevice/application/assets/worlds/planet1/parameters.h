@@ -19,7 +19,7 @@
 #define CLIPMAP_ODDITY		(CLIPMAP_KERNEL%2)
 
 // World parameters
-#define FOG_DENSITY			0.00010  // 0.0004
+//#define FOG_DENSITY			0.00010  // 0.0004
 
 // Rendering
 #define TARGET_FPS          60

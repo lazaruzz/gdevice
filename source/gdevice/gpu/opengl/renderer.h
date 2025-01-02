@@ -41,11 +41,7 @@ public:
 	Array<mat4> ModelViewMatrixStack;
 
 	//Material* material;
-	vec4 ambientLight;
-	vec4 indirectLight;
 	Light* lights[MAX_LIGHTS];
-
-	float fog_density;
 
     Program programGenerateTerrain;
     Program programGenerateGradientMap;
@@ -212,23 +208,6 @@ public:
 		// TODO frustum culling
 	}
 
-	void setTransform( mat4& transform )
-	{
-		glMatrixMode( GL_MODELVIEW );
-		glLoadMatrixf( transform.array );
-	}
-
-	void setFogDensity( float density )
-	{
-		fog_density = density;
-	}
-
-	void setAmbientLight( vec4& ambientLight )
-	{
-		this->ambientLight = ambientLight;
-		glLightModelfv( GL_LIGHT_MODEL_AMBIENT, ambientLight.array );
-	}
-
 	int vertices;
 
 
@@ -265,57 +244,33 @@ public:
 
 	void draw( Node& node )
 	{
-        // ****  NOTE  **** ////////////
-        // Do not send in pipeline a node the very first time is generated as it might not be updated (and valid) yet.
-        // From 2nd generation on, the node might be updated or not, yet valid. In case it is not updated, it will be the previous version.
-        // This is workaround to avoid waiting for glDispatchCompute() to finish (syncronization GPU/CPU).
-        bool skipRenderingThisNodeThisTime = false;
-        ////////////////////////////////
+        Transform* transformPtr = dynamic_cast<Transform*>(&node);
+        if (transformPtr) 
+        {
+		    ModelViewMatrixStack.push( ModelViewMatrix );
+		    ModelViewMatrix *= TransformationMatrix( transformPtr->transform );
+		    ModelViewProjectionMatrix = ProjectionMatrix * ModelViewMatrix;
+		    NormalMatrix = inverseTranspose( mat3(ModelViewMatrix) );
+        }
 
-		ModelViewMatrixStack.push( ModelViewMatrix );
-		ModelViewMatrix *= TransformationMatrix( node.transform );
-		ModelViewProjectionMatrix = ProjectionMatrix * ModelViewMatrix;
-		NormalMatrix = inverseTranspose( mat3(ModelViewMatrix) );
-        /*
-            // TEST Removing scale component from NormalMatrix to fix the gradient discountinuity problem.
-            mat4 ModelViewMatrixWithoutScale = ModelViewMatrixStack.tail();
-                // TransformationMatrix(node.transform);
-            	mat4 t = mat4(1.0); //mat4(transform.scale);
-                t.translation.xyz = //transform.scale * 
-                                    node.transform.position;
-                t = RotationMatrix(node.transform.rotation) * t;
-                ModelViewMatrixWithoutScale *= t;
-            NormalMatrix = inverseTranspose( mat3(ModelViewMatrixWithoutScale) );
-        */
+        Impostor* imposterPtr = dynamic_cast<Impostor*>(&node);
+        Geometry* geometryPtr = dynamic_cast<Geometry*>(&node);
+        Invalidable* invalidablePtr = dynamic_cast<Invalidable*>(&node);
 
-
-		setTransform( ModelViewMatrix );
-/*
-		if( node.light ) {
-			lights[ node.light->id ] = node.light;
-		}*/
-/*
-		if( node.material ) {
-			material = node.material;
-
-			indirectLight	= material->emission + material->ambient * ambientLight;
-
-			for( int i=0; i<MAX_LIGHTS; i++ )
-			{
-				if( lights[i] != NULL )
-				{
-					lights[i]->FrontLightProduct_ambient  = material->ambient  * lights[i]->ambient;
-					lights[i]->FrontLightProduct_specular = material->specular * lights[i]->specular;
-				}
-			}
-		}
-        */
-/* // is this causing occasional crashes at startup?
-		if( !node.impostor.empty() )
+        /* if( imposterPtr && !imposterPtr->impostorTexture.empty() )
 		{
 			// TODO draw impostor quad
 		} 
-		else */ if( node.vbo ) {
+		else */ 
+        if( node.vbo ) 
+        {
+            // ****  NOTE  **** ////////////
+            // Do not send in pipeline a node the very first time is generated as it might not be updated (and valid) yet.
+            // From 2nd generation on, the node might be updated or not, yet valid. In case it is not updated, it will be the previous version.
+            // This is workaround to avoid waiting for glDispatchCompute() to finish (syncronization GPU/CPU).
+            bool skipRenderingThisNodeThisTime = false;
+            ////////////////////////////////
+
 			if( node.videomem_invalidated )
 			{
                 DEBUG_WARNING_ONCE("Found invalid tile - need to generate first!");
@@ -330,7 +285,8 @@ public:
                 );
 			}
 
-            if( !skipRenderingThisNodeThisTime ) { // TEMP
+            if( !skipRenderingThisNodeThisTime ) 
+            { // TEMP
                 drawMesh( node );
             } else {
                 DEBUG_TRACE("Skipping drawMesh (might still be generating the node)");
