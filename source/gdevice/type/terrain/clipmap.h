@@ -3,7 +3,7 @@
 #include "application/assets/worlds/planet1/parameters.h"
 #include "type/node.h"
 
-struct Clipmap : public Node
+struct Clipmap : public Node //, Updatable, Parent, Child, Transform, TileData, Geometry, Cullable, Impostor
 {
 	Node tiles[ CLIPMAP_SIZE * CLIPMAP_SIZE ];
 
@@ -35,7 +35,8 @@ struct Clipmap : public Node
 		previousLocation = dvec2(1E10,1E10);
 
 		for(int i=0; i<CLIPMAP_SIZE; i++)
-		for(int j=0; j<CLIPMAP_SIZE; j++) {
+		for(int j=0; j<CLIPMAP_SIZE; j++)
+        {
 			Node& tile = getTile(i,j);
 			tile.transform.position = vec3( i-CLIPMAP_SIZE/2, j-CLIPMAP_SIZE/2, 0 );
 			tile.transform.rotation = vec3( 0, 0, 0 );
@@ -57,7 +58,8 @@ struct Clipmap : public Node
 	~Clipmap()
 	{
 		for(int i=0; i<CLIPMAP_SIZE; i++)
-		for(int j=0; j<CLIPMAP_SIZE; j++) {
+		for(int j=0; j<CLIPMAP_SIZE; j++)
+        {
 			delete getTile(i,j).vbo;
 		}
 	}

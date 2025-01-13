@@ -21,17 +21,22 @@ struct Child
 {
 // TODO Parent* parent;
     Node* parent; // TODO use Parent* instead of Node*
+
+    Child() : parent(NULL) {};
+    virtual ~Child() {};
 };
-/*
-struct Hierarchy 
-{
-    Node* parent;
-	Array<Node*> children;
-};
-*/
+
 struct Transform 
 {
     mat3 transform;
+
+    Transform()
+	{
+		transform.position	= vec3(0);
+		transform.rotation	= vec3(0);
+		transform.scale		= vec3(1);
+    }
+    virtual ~Transform() {};
 };
 
 struct Cullable
@@ -46,13 +51,23 @@ struct Geometry
     // TODO VAO => stores the state of vertex attributes for performance.
 	VertexBuffer*	vbo;
 	IndexBuffer*	ibo;
+
+    Geometry() : vbo(NULL), ibo(NULL) {}
+    virtual ~Geometry() {};
 };
+
+typedef int RenderTarget;
+struct Renderable
+{
+    // TODO virtual void render(RenderTarget target) = 0;
+};
+
 
 struct Impostor 
 {
     vec2			impostorDirection;
 	float			impostorDistance;
-	Texture<rgba>	impostorTexture;	
+	Texture<rgba>	impostorTexture; // TODO Updatable
 };
 
 struct TileData
@@ -63,40 +78,15 @@ struct TileData
 
 ////////////////
 //
-
-struct _NodeBase
+//typedef Cacheable Updatable;
+struct Updatable : Cacheable
 {
-virtual ~_NodeBase() {};
+    // TODO virtual void Update() = 0;
 };
 
-typedef Cacheable Invalidable;
-
-struct _Heightmap : _NodeBase, Invalidable, Parent, Child, Transform, Cullable, Impostor
+struct Node : Parent, Child, Transform, Impostor, Updatable, TileData, Geometry, Cullable, Renderable
 {
-
+	Node() {}
+    virtual ~Node() {};
 };
 
-struct _Clipmap : _NodeBase, Invalidable, Parent, Child, Transform, Cullable, Impostor
-{
-    
-};
-
-struct _Tile : _NodeBase, Invalidable, Child, Transform,  TileData, Geometry, Cullable, Impostor
-{
-
-};
-
-struct Node : _NodeBase, Invalidable, Parent, Child, Transform, TileData, Geometry, Cullable, Impostor
-{
-	Node()
-	{
-		transform.position	= vec3(0);
-		transform.rotation	= vec3(0);
-		transform.scale		= vec3(1);
-
-		this->vbo		= NULL;
-		this->ibo		= NULL;
-		this->parent	= NULL;
-	}
-
-};

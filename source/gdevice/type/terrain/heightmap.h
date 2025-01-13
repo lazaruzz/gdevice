@@ -6,7 +6,7 @@
 #include "gpu/renderer.h"
 
 
-struct Heightmap : public Node // TODO _NodeBase
+struct Heightmap : public Node //, Updatable, Parent, Child, Transform, TileData, Geometry, Cullable, Impostor
 {
 private:
 	int   tileRes;
@@ -74,7 +74,7 @@ public:
         // TODO: Return height detected (?)
 		return 0.0; 
     }
-
+/*
     void generateInvalidatedTiles(Renderer& renderer) 
     {
         DEBUG_PROFILE_ONCE(5.0);
@@ -83,15 +83,15 @@ public:
 	        for(int i=0; i<CLIPMAP_SIZE; i++)
 	        for(int j=0; j<CLIPMAP_SIZE; j++) {
                 Node& node = clipmap->getTile(i,j); 
-
 			    if( node.videomem_invalidated ) {
-				    renderer.generate2( &node );
+				    renderer.Update( &node );
 				    node.videomem_invalidated = false;
 				    node.hostmem_invalidated = true;
                 }
 	        }
         }
 	}
+    */
 /*
     // NOTE: Might be invariant
     void bindTileWithItsCoarserTile() 

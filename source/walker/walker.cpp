@@ -16,25 +16,14 @@
 
 #include "type/entity.h"
 
-// TODO all include should be gd/ prefixed: gd/os/platform, gd/type/node
-// TODO maybe also incapsulated in gd namespace (?)
+///////////////////////////////////////////////7
 
 
-    // TODO ECS based entity creation, with components and systems
-    
-/*    typedef dmat3 Transform;
-    Transform camera2 = AddComponent<Transform>(scene); // TODO scene.AddComponent<Transform>();
-    Node2 heightmap = AddChild<Heightmap>(scene); // TODO scene.AddChild<Heightmap>();
-*/
 
-void CreateScene()
-{
-    // scene       : Hierarchy
-    // - Heightmap : Transform3D (camera), Hierarchy
-    //   - Clipmap : Transform2D, Hierarchy
-    //     - Tile  : Transform2D, VBO/IBO, Imposter
-    // - Gui imposter
-}
+
+
+
+
 
 
 class Walker : gd::Application<Walker>
@@ -136,7 +125,7 @@ public:
         // Update scene
         //
         double level = heightmap.moveAt(camera); // moves and rotates the world (not the camera)
-        heightmap.generateInvalidatedTiles(renderer);
+        // TEMP heightmap.generateInvalidatedTiles(renderer);
 
         // TODO: Sleep while compute shader is working.
 /*      double amountSleep = 1.0/TARGET_FPS - elapsed;
@@ -155,8 +144,17 @@ public:
 	    renderer.inverseRotationMatrix = transpose(RotationMatrix(scene.transform.rotation) * RotationMatrix(heightmap.transform.rotation));
         renderer.setLight(sun);
         // TODO: renderer.setTarget<rgba>( NULL );
-	    renderer.draw( scene );
+
+        // ****  NOTE  **** ////////////
+        // Do not send in pipeline a node the very first time is generated as it might not be updated (and valid) yet.
+        // From 2nd generation on, the node might be updated or not, yet valid. In case it is not updated, it will be the previous version.
+        // This is workaround to avoid waiting for glDispatchCompute() to finish (syncronization GPU/CPU).
+        static bool skipRenderingOnce = false;
+
+	    renderer.traverse( scene, skipRenderingOnce );
 	    renderer.drawSky();
+
+        skipRenderingOnce = true;
 
 
 	    // 
