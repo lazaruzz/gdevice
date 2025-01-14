@@ -6,7 +6,9 @@
 #include "gpu/renderer.h"
 
 
-struct Heightmap : public Node //, Updatable, Parent, Child, Transform, TileData, Geometry, Cullable, Impostor
+
+
+struct Heightmap : public Node, Parent, Child, Transform 
 {
 private:
 	int   tileRes;
@@ -18,7 +20,6 @@ public:
 
 	Heightmap()
 	{
-		vbo = NULL;
 		tileRes = 17;
 
 		transform.position.xy += CLIPMAP_ODDITY ? 0.0f : -1.0f;
@@ -73,6 +74,11 @@ public:
 
         // TODO: Return height detected (?)
 		return 0.0; 
+    }
+
+    void render(RenderTarget target)
+    {
+        // TODO
     }
 /*
     void generateInvalidatedTiles(Renderer& renderer) 

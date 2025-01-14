@@ -3,9 +3,49 @@
 #include "application/assets/worlds/planet1/parameters.h"
 #include "type/node.h"
 
-struct Clipmap : public Node //, Updatable, Parent, Child, Transform, TileData, Geometry, Cullable, Impostor
+
+struct Tile : public Node, Transform, Child, Updatable, Geometry, Renderable
 {
-	Node tiles[ CLIPMAP_SIZE * CLIPMAP_SIZE ];
+    vec4 tileID;
+
+    void Render(Renderer& renderer, RenderTarget& target)
+    {
+        // Ensure it's overriding 
+        static_cast<void(Renderable::*)(Renderer& renderer, RenderTarget& target)>(&Tile::Render);
+
+        DEBUG_ASSERT( vbo );
+        DEBUG_ASSERT( ibo );
+        DEBUG_ASSERT( parent );
+
+        Transform* pClipmap = dynamic_cast<Transform*>(parent);
+        DEBUG_ASSERT( pClipmap );
+
+        Child* pClipmapAsChild = dynamic_cast<Child*>(pClipmap);
+        DEBUG_ASSERT( pClipmapAsChild );
+        DEBUG_ASSERT( pClipmapAsChild->parent );
+
+        Transform* pHeightmap = dynamic_cast<Transform*>(pClipmapAsChild->parent);
+        Parent* pHeightmapAsParent = dynamic_cast<Parent*>(pClipmapAsChild->parent);
+
+        vec2 tileOffset = pHeightmap->transform.position.xy + pClipmap->transform.position.xy + transform.position.xy;
+
+        float visibileDistance = 2*(1<<(pHeightmapAsParent->children.size()));
+
+
+        renderer.RenderTerrainTile(*vbo, *ibo, tileOffset, visibileDistance);
+    }
+
+    void Update(Renderer& renderer) 
+    {
+        DEBUG_ASSERT(vbo);
+        renderer.GenerateTerrainTile(tileID, *vbo);
+    }
+};
+
+struct Clipmap : public Node //, Updatable, Parent, Child, Transform, TileData, Geometry, Cullable, Impostor
+    , Transform, Parent, Child
+{
+	Tile tiles[ CLIPMAP_SIZE * CLIPMAP_SIZE ];
 
 	int lod;
     ivec2 coarserTile;
@@ -16,7 +56,7 @@ struct Clipmap : public Node //, Updatable, Parent, Child, Transform, TileData, 
 
 	dvec2 previousLocation;
 
-	inline Node& getTile( int i, int j ) 
+	inline Tile& getTile( int i, int j ) 
 	{
 		return tiles[i+j*CLIPMAP_SIZE];
 	}
@@ -37,7 +77,7 @@ struct Clipmap : public Node //, Updatable, Parent, Child, Transform, TileData, 
 		for(int i=0; i<CLIPMAP_SIZE; i++)
 		for(int j=0; j<CLIPMAP_SIZE; j++)
         {
-			Node& tile = getTile(i,j);
+			Tile& tile = getTile(i,j);
 			tile.transform.position = vec3( i-CLIPMAP_SIZE/2, j-CLIPMAP_SIZE/2, 0 );
 			tile.transform.rotation = vec3( 0, 0, 0 );
 			tile.videomem_invalidated = true;
@@ -122,8 +162,8 @@ struct Clipmap : public Node //, Updatable, Parent, Child, Transform, TileData, 
 			int q = j + dj;
 
 			if( p>=0 && p<CLIPMAP_SIZE && q>=0 && q<CLIPMAP_SIZE) {
-				Node& a = getTile(i,j);
-				Node& b = getTile(p,q);
+				Tile& a = getTile(i,j);
+				Tile& b = getTile(p,q);
 				VertexBuffer* t = a.vbo; a.vbo = b.vbo; b.vbo = t;
 				bool  n = a.videomem_invalidated; a.videomem_invalidated = b.videomem_invalidated; b.videomem_invalidated = n;
 				      n = a.hostmem_invalidated;  a.hostmem_invalidated = b.hostmem_invalidated;   b.hostmem_invalidated = n;
@@ -138,6 +178,11 @@ struct Clipmap : public Node //, Updatable, Parent, Child, Transform, TileData, 
 			getTile(i,j).tileID = vec4( point, tileSize, 0.0 );
 		}
 	}
+
+    void render(RenderTarget target)
+    {
+        // TODO
+    }
 
 	void updateChildren( bool bx, bool by )
 	{

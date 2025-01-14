@@ -21,24 +21,25 @@
 
 
 
+struct Scene : Node, Transform, Parent
+{
 
-
+};
 
 
 
 class Walker : gd::Application<Walker>
 {
-// NEW
+/*
     Entity scene2;
     typedef dmat3 Transform;
     //Transform& camera2;
+*/
 
-
-// OLD
     dmat3 camera; 
     double speedFactor;
 
-    Node scene;
+    Scene scene;
     Heightmap heightmap;
     float time; 
     Light sun;  // TODO vec3 sun;
@@ -50,7 +51,6 @@ public:
     {
         heightmap.setTileResolution(TILE_RESOLUTION);
 	    heightmap.setLODs(CLIPMAPS_COUNT);	
-	    //heightmap.light = &sun;
 
         scene.transform.rotation = vec3(-90, 0, 0);
 	    scene.children.push(&heightmap);

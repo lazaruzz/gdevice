@@ -26,7 +26,7 @@ struct Cacheable
 	{
 	}
 
-    ~Cacheable()
+    virtual ~Cacheable()
     {
 		deallocate();
     }

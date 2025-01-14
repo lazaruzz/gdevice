@@ -255,8 +255,8 @@ void traverse( Node& node, bool skipRendering = false )
         Updatable* pUpdatable = dynamic_cast<Updatable*>(&node);
         if( pUpdatable && pUpdatable->videomem_invalidated )
 		{
-            // TODO pUpdatable->Update();
-			Update( &node );
+            pUpdatable->Update(*this);
+			//Update( &node );
 
 			pUpdatable->videomem_invalidated = false;
 			pUpdatable->hostmem_invalidated = true;
@@ -269,8 +269,12 @@ void traverse( Node& node, bool skipRendering = false )
 
         if( !skipRendering)
         {
-            // TODO pRenderable->Render();
-            drawMESH( node );
+            Renderable* pRenderable = dynamic_cast<Renderable*>(&node);
+            if(pRenderable) 
+            {
+                RenderTarget target;
+                pRenderable->Render(*this, target);
+            }
         }
 	}
 
@@ -290,66 +294,10 @@ void traverse( Node& node, bool skipRendering = false )
 }
 
 
-void drawMESH( Node& node )
+// TODO 
+void RenderTerrainTile( VertexBuffer& vbo, IndexBuffer& ibo, vec2 tileOffset, float visibileDistance  )
 {		
-	DEBUG_ASSERT( node.vbo );
-    DEBUG_ASSERT( node.ibo );
-
-    // NOTE: In order to avoid syncronization CPU/GPU, invalidation is not managed properly.
-    // So possible invalid nodes can't be skipped here (as invalidation is not reliable).
-/*
-    // TEMP Seeking for the reason of the crash
-    if( node.videomem_invalidated ) {
-        DEBUG("node.videomem_invalidated\n");
-        return;
-    } */
-    if( node.vbo == NULL ) {
-        DEBUG_WARNING("node.vbo == NULL");
-        return;
-    }
-    if( node.ibo == NULL ) {
-        DEBUG_WARNING("node.ibo == NULL");
-        return;
-    } /*
-    if( node.vbo->videomem_invalidated ) {
-        printf("node.vbo->videomem_invalidated\n");
-        return;
-    }
-    if( node.ibo->videomem_invalidated ) {
-        printf("node.ibo->videomem_invalidated\n");
-        return;
-    } */
-
-	Node& tile = node;
-	Node& clipmap = *tile.parent;
-	Node& heightmap = *clipmap.parent;
-
-	vec2 tileOffset = heightmap.transform.position.xy + clipmap.transform.position.xy + tile.transform.position.xy;
-
-	//float tileSize = clipmap.tileSize;
-	//vec2 location = vec2(heightmap.location.x, heightmap.location.y); // TODO handle the loss of data
-	//vec2 world_tile_offset = -location + (clipmap.transform.position.xy + tile.transform.position.xy) * tileSize;
-
-	VertexBuffer& vbo = *node.vbo;
-	IndexBuffer&  ibo = *node.ibo;
-
-
-	//
-	// select effective lod
-	//
-
-	int lod = 0;
-
-	//
-	// Binding program
-	//
     GL::GLSL::bind(programRenderTerrain);
-
-	//
-	// Binding uniforms
-	// 
-	#define NUM_CAUSTICS  32
-	float scale = node.vbo->mixmaps.scale.s;
 
 	for( int i=0; i<Controls::CONTROLCOUNT; i++ ) 
 	{
@@ -357,9 +305,6 @@ void drawMESH( Node& node )
 		GL::GLSL::set( programRenderTerrain, controls.literals[i][0], controls.values[Controls::Bindings[i]] % size ); 
 	}
 	
-	//
-	// Binding attributes
-	//
 	GL::GLSL::set( programRenderTerrain, "quartetsTU",  0); GL::Texturing::bind( 0, vbo.quartets );
 	GL::GLSL::set( programRenderTerrain, "gradientsTU", 1); GL::Texturing::bind( 1, vbo.gradients );
 	GL::GLSL::set( programRenderTerrain, "colorsTU",    2); GL::Texturing::bind( 2, vbo.colors ); 
@@ -376,7 +321,7 @@ void drawMESH( Node& node )
 	// LOD transitions blending
 	GL::GLSL::set( programRenderTerrain, "tileOffset", tileOffset );
 	GL::GLSL::set( programRenderTerrain, "kernelSize", float(CLIPMAP_WINDOW/2) );
-	GL::GLSL::set( programRenderTerrain, "scale", scale );
+	GL::GLSL::set( programRenderTerrain, "scale", vbo.mixmaps.scale.s );
 
 	// transformation
 	GL::GLSL::set( programRenderTerrain, "ModelViewProjectionMatrix",	ModelViewProjectionMatrix );
@@ -395,14 +340,12 @@ void drawMESH( Node& node )
 	GL::GLSL::set( programRenderTerrain, "viewport", getViewport() );
 	GL::GLSL::set( programRenderTerrain, "InverseRotationProjection", inverseRotationMatrix * inverseProjection(ProjectionMatrix) );
     
-    float visibileDistance = 2*(1<<(heightmap.children.size()));
-    //DEBUG_TRACE_ONCE(visibileDistance);
-    //DEBUG_TRACE_ONCE(heightmap.children.size());
     GL::GLSL::set( programRenderTerrain, "visibileDistance", visibileDistance );
 	GL::GLSL::set( programRenderTerrain, "AbsoluteTime",	float(Timer::absoluteTime()) );
 
     const int HeightBlendView = 2;
-    if( controls.values[Controls::Bindings[Controls::DEBUGMODE]] == HeightBlendView ) {
+    if( controls.values[Controls::Bindings[Controls::DEBUGMODE]] == HeightBlendView )
+    {
         GL::GLSL::set(programRenderTerrain, "defaultColorR", vec4(1.0, 0.0, 0.0, 0.0));
         GL::GLSL::set(programRenderTerrain, "defaultColorG", vec4(0.0, 1.0, 0.0, 0.0));
         GL::GLSL::set(programRenderTerrain, "defaultColorB", vec4(0.0, 0.0, 1.0, 0.0));
@@ -416,6 +359,8 @@ void drawMESH( Node& node )
 		
 	GL::VBO::bind( vbo );
     GL::VBO::bind( ibo ); // Needs an index buffer bound (for now)
+
+    int lod = 0; // TODO
 
 	glPatchParameteri(GL_PATCH_VERTICES, 4);		
 	glDrawElements(
@@ -433,55 +378,36 @@ void drawMESH( Node& node )
 	GL::VBO::unbind( GL_ARRAY_BUFFER );
 	GL::VBO::unbind( GL_ELEMENT_ARRAY_BUFFER );
 
-
 	vertices += ibo.lods[lod].count;
 }
+ 
 
 
-void Update( Node* tile )
+void GenerateTerrainTile(const vec4& tileID, VertexBuffer& vbo)
 {
-	//glFlush();
-	//glFinish();
-
-    // TODO 
-    // foreach(quartet, vbo) {
-    // vbo = execute(offset, size) {
-    // ... glsl code ...
-
-	VertexBuffer& vbo = *tile->vbo;
-
     GL::GLSL::bind( programGenerateTerrain );
 
-    GL::GLSL::set( programGenerateTerrain, "offset",	tile->tileID.xy );
-	GL::GLSL::set( programGenerateTerrain, "size",		tile->tileID.z );
+    GL::GLSL::set( programGenerateTerrain, "offset",	tileID.xy );
+    GL::GLSL::set( programGenerateTerrain, "size",		tileID.z );
 
-    // creation of texture, uploading and binding to texture unit
-	GL::Texturing::bind( 0, vbo.quartets );
-	GL::Texturing::bind( 1, vbo.gradients );
-	GL::Texturing::bind( 2, vbo.colors ); 
-	GL::Texturing::bind( 3, vbo.mixmaps ); 
-	glBindImageTexture(0, vbo.quartets.id,	0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);  
-	glBindImageTexture(1, vbo.gradients.id,	0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-	glBindImageTexture(2, vbo.colors.id,	0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-	glBindImageTexture(3, vbo.mixmaps.id,	0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+    GL::Texturing::bind( 0, vbo.quartets );
+    GL::Texturing::bind( 1, vbo.gradients );
+    GL::Texturing::bind( 2, vbo.colors ); 
+    GL::Texturing::bind( 3, vbo.mixmaps ); 
+    glBindImageTexture(0, vbo.quartets.id,	0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);  
+    glBindImageTexture(1, vbo.gradients.id,	0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+    glBindImageTexture(2, vbo.colors.id,	0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+    glBindImageTexture(3, vbo.mixmaps.id,	0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
-    // binding texture unit
-    //GL::GLSL::set(programGenerateTerrain, "detailsTU",   4); glBindImageTexture(4, details.id,	    0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);  
-	//GL::GLSL::set(programGenerateTerrain, "detailsDxTU", 5); glBindImageTexture(5, detailsDx[0].id, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-	//GL::GLSL::set(programGenerateTerrain, "detailsDyTU", 6); glBindImageTexture(6, detailsDy[0].id, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-    //GL::Texturing::bind( 4, details );
-    //glBindImageTexture(4, details.id,	0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);  
-
-	// execute
-	glDispatchCompute( vbo.quartets.size.x/2+1, vbo.quartets.size.y/2+1, 1 );
-	//glFlush();
-	//glFinish();
+    glDispatchCompute( vbo.quartets.size.x/2+1, vbo.quartets.size.y/2+1, 1 );
 }
 
 void drawSky()
 {
 	GL::GLSL::bind( programRenderSky );
-    for(int i = Controls::GAMMA; i <= Controls::VIGNETTING; i++) {
+
+    for(int i = Controls::GAMMA; i <= Controls::VIGNETTING; i++)
+    {
 		int size = controls.literals[i].size() <= 1 ? 2 : controls.literals[i].size();
 		GL::GLSL::set( programRenderSky, controls.literals[i][0], controls.values[Controls::Bindings[i]] % size ); 
 	}
@@ -491,6 +417,7 @@ void drawSky()
 	GL::GLSL::set( programRenderSky, "AbsoluteTime",	            float(Timer::absoluteTime()) );
 	glDrawArrays(GL_POINTS, 0, 1);
 }
+
 /*
 void generateDetailGradient() 
 {
