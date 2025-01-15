@@ -283,7 +283,11 @@ void traverse( Node& node, bool skipRendering = false )
     {
 	    for( int i=0; i<pParent->children.size(); i++ )
 	    {
-		    traverse( *pParent->children[i] );
+            Node* childAsNode = dynamic_cast<Node*>(pParent->children[i]);
+            if(childAsNode) 
+            {
+		        traverse( *childAsNode );
+            }
 	    }
     }
 

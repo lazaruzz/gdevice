@@ -11,18 +11,22 @@
 
 #include "gpu/renderer.h"
 
-struct Node;
-struct Child;
+struct Node
+{
+	Node() {}
+    virtual ~Node() {};
+};
 
+struct Child;
 struct Parent 
 {
-	Array<Node*> children; // TODO use Child* instead of Node*
+	Array<Child*> children; // TODO use Child* instead of Node*
+    virtual ~Parent() {};
 };
 
 struct Child 
 {
-// TODO Parent* parent;
-    Node* parent; // TODO use Parent* instead of Node*
+    Parent* parent;
 
     Child() : parent(NULL) {};
     virtual ~Child() {};
@@ -41,11 +45,6 @@ struct Transform
     virtual ~Transform() {};
 };
 
-struct Cullable
-{
-    vec4 AABB;
-};
-
 struct Geometry 
 {
 	// TODO Material*		material; // TerrainMaterial by default
@@ -55,37 +54,35 @@ struct Geometry
 	IndexBuffer*	ibo;
 
     Geometry() : vbo(NULL), ibo(NULL) {}
-    virtual ~Geometry() {};
+    virtual ~Geometry() 
+    {
+        // TODO delete vbo, ibo
+    };
 };
 
 typedef int RenderTarget;
 class Renderer;
 struct Renderable
 {
+    vec4 AABB;
     virtual void Render(Renderer& renderer, RenderTarget& target) = 0;
+    virtual ~Renderable() {};
 };
-
 
 struct Impostor 
 {
     vec2			impostorDirection;
 	float			impostorDistance;
 	Texture<rgba>	impostorTexture; // TODO Updatable
+    virtual ~Impostor() {};
 };
 
-
-////////////////
-//
-//typedef Cacheable Updatable;
 class Renderer;
 struct Updatable : Cacheable
 {
     virtual void Update(Renderer& renderer) = 0;
+    virtual ~Updatable() {};
 };
 
-struct Node
-{
-	Node() {}
-    virtual ~Node() {};
-};
+
 

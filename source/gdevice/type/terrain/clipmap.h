@@ -3,47 +3,10 @@
 #include "application/assets/worlds/planet1/parameters.h"
 #include "type/node.h"
 
-
-struct Tile : public Node, Transform, Child, Updatable, Geometry, Renderable
-{
-    vec4 tileID;
-
-    void Render(Renderer& renderer, RenderTarget& target)
-    {
-        // Ensure it's overriding 
-        static_cast<void(Renderable::*)(Renderer& renderer, RenderTarget& target)>(&Tile::Render);
-
-        DEBUG_ASSERT( vbo );
-        DEBUG_ASSERT( ibo );
-        DEBUG_ASSERT( parent );
-
-        Transform* pClipmap = dynamic_cast<Transform*>(parent);
-        DEBUG_ASSERT( pClipmap );
-
-        Child* pClipmapAsChild = dynamic_cast<Child*>(pClipmap);
-        DEBUG_ASSERT( pClipmapAsChild );
-        DEBUG_ASSERT( pClipmapAsChild->parent );
-
-        Transform* pHeightmap = dynamic_cast<Transform*>(pClipmapAsChild->parent);
-        Parent* pHeightmapAsParent = dynamic_cast<Parent*>(pClipmapAsChild->parent);
-
-        vec2 tileOffset = pHeightmap->transform.position.xy + pClipmap->transform.position.xy + transform.position.xy;
-
-        float visibileDistance = 2*(1<<(pHeightmapAsParent->children.size()));
+#include "type/terrain/tile.h"
 
 
-        renderer.RenderTerrainTile(*vbo, *ibo, tileOffset, visibileDistance);
-    }
-
-    void Update(Renderer& renderer) 
-    {
-        DEBUG_ASSERT(vbo);
-        renderer.GenerateTerrainTile(tileID, *vbo);
-    }
-};
-
-struct Clipmap : public Node //, Updatable, Parent, Child, Transform, TileData, Geometry, Cullable, Impostor
-    , Transform, Parent, Child
+struct Clipmap : public Node, Transform, Parent, Child
 {
 	Tile tiles[ CLIPMAP_SIZE * CLIPMAP_SIZE ];
 
@@ -61,7 +24,7 @@ struct Clipmap : public Node //, Updatable, Parent, Child, Transform, TileData, 
 		return tiles[i+j*CLIPMAP_SIZE];
 	}
 
-	Clipmap( Node* parent, int lod, int tileRes, IndexBuffer* ibo )
+	Clipmap( Parent* parent, int lod, int tileRes, IndexBuffer* ibo )
 	{
 		this->parent = parent;
 		this->lod = lod;

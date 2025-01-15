@@ -304,11 +304,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\os\keyboard.h"
+				RelativePath=".\os\win32\keyboard.h"
 				>
 			</File>
 			<File
-				RelativePath=".\os\win32\keyboard.h"
+				RelativePath=".\os\keyboard.h"
 				>
 			</File>
 			<File
@@ -320,11 +320,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\os\mutex.h"
+				RelativePath=".\os\win32\mutex.h"
 				>
 			</File>
 			<File
-				RelativePath=".\os\win32\mutex.h"
+				RelativePath=".\os\mutex.h"
 				>
 			</File>
 			<File
@@ -348,11 +348,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\gpu\renderer.h"
+				RelativePath=".\gpu\opengl\renderer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\gpu\opengl\renderer.h"
+				RelativePath=".\gpu\renderer.h"
 				>
 			</File>
 			<File
@@ -364,11 +364,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\os\thread.h"
+				>
+			</File>
+			<File
 				RelativePath=".\os\win32\thread.h"
 				>
 			</File>
 			<File
-				RelativePath=".\os\thread.h"
+				RelativePath=".\type\terrain\tile.h"
 				>
 			</File>
 			<File
@@ -388,11 +392,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\os\window.h"
+				RelativePath=".\os\win32\window.h"
 				>
 			</File>
 			<File
-				RelativePath=".\os\win32\window.h"
+				RelativePath=".\os\window.h"
 				>
 			</File>
 		</Filter>
